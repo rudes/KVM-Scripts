@@ -13,20 +13,16 @@ libvirtd --version:
 Base Guest:
 
 root@base:~# uname -a
+
 Linux base 3.2.0-4-amd64 #1 SMP Debian 3.2.68-1+deb7u1 x86_64 GNU/Linux
 
 root@base:~# cat /etc/os-release
+
 PRETTY_NAME="Debian GNU/Linux 7 (wheezy)"
-NAME="Debian GNU/Linux"
-VERSION_ID="7"
 VERSION="7 (wheezy)"
-ID=debian
-ANSI_COLOR="1;31"
-HOME_URL="http://www.debian.org/"
-SUPPORT_URL="http://www.debian.org/support/"
-BUG_REPORT_URL="http://bugs.debian.org/"
 
 root@base:~# df -h
+
 Filesystem                                              Size  Used Avail Use% Mounted on
 rootfs                                                  1.8G  926M  816M  54% /
 udev                                                     10M     0   10M   0% /dev
@@ -36,6 +32,7 @@ tmpfs                                                   5.0M     0  5.0M   0% /r
 tmpfs                                                   430M     0  430M   0% /run/shm
 
 root@base:~# free -h
+
              total       used       free     shared    buffers     cached
 Mem:          2.0G       156M       1.8G         0B       8.8M        68M
 -/+ buffers/cache:        79M       1.9G
