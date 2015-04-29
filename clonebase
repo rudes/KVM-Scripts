@@ -1,0 +1,109 @@
+#!/bin/bash
+
+##################################################
+##					VARIABLES					##
+##################################################
+BASE_VM="base_debian"
+STORAGE_PATH="/home/jariddle/images"
+DOMAIN="cryocorp.local"
+BASE_LAN_IP="192.168.1"
+
+if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] || [ -z $BASE_LAN_IP ];then
+		echo -e "########################################################"
+		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
+		echo -e "########################################################"
+		exit 1
+fi
+# Get name for new VM, virt-clone the baseline VM under the new name
+read -p "New VM Name: " NEW_VM
+echo -e "Cloning Baseline VM"
+virt-clone -o $BASE_VM -n $NEW_VM -f "$STORAGE_PATH/$NEW_VM.img"
+echo -e "Clone Complete"
+
+# Start the VM and get the IP using arp
+echo -e "Starting $NEW_VM"
+virsh start $NEW_VM
+
+echo -e "Getting $NEW_VM's IP"
+sleep 10
+# In order to get the IP from ARP you have to first ping the IP 
+# For loop pings all IP's in LAN
+for i in {1..249};do
+		ping -c 1 -n -q -r -t 1 -s 1 -W 1 $BASE_LAN_IP.$i > /dev/null &
+done
+# Wait for arp to see the mac address from the xml file for the New VM
+while [[ -z $VM_IP ]];do
+		VM_IP=$(arp -an | grep "$(virsh dumpxml $NEW_VM | grep "mac address"| sed "s/.*'\(.*\)'.*/\1/g")" | awk '{print $2}' | tr -d '()')
+done
+echo "$NEW_VM's IP: $VM_IP"
+
+# Get storage size and ask to add storage
+STORAGE_SIZE=$(ls -hl $STORAGE_PATH | grep $NEW_VM | awk '{printf $5}')
+echo -e "Storage Size: $STORAGE_SIZE"
+read -p "Add Storage? (ex: +10G or 'n' to exit): " NEW_SIZE
+# If user decides to add storage shutdown VM, rezise .img file and start VM
+if [[ -n "$NEW_SIZE" ]];then
+	if [ "$NEW_SIZE" != "n" ];then
+		virsh shutdown $NEW_VM
+		sleep 15
+		while [ ping -c 1 $VM_IP &>/dev/null ];do sleep 1;done
+
+		qemu-img resize "$STORAGE_PATH/$NEW_VM.img" "$NEW_SIZE"
+		
+		echo -e "##############################################################"
+		echo -e "# Entering SSH as root to Resize Storage and Change Hostname #"
+		echo -e "# Run fdisk /dev/vda                                         #"
+		echo -e "# Delete all partitions and rebuild with the extra storage   #"
+		echo -e "# Write the Changes                                          #"
+		echo -e "# Exit SSH to Reboot $NEW_VM								  #"
+		echo -e "##############################################################"
+
+		virsh start $NEW_VM
+		sleep 10
+		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+		sleep 8
+# SSH Into VM to repartition vda device, reboot the VM on exit
+		ssh root@$VM_IP
+		virsh reboot $NEW_VM
+
+		echo -e "Waiting for $NEW_VM to reboot."
+		sleep 15
+		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+# Expand storage on new VM using resize2fs
+		echo -e "Expanding new storage"
+		ssh root@$VM_IP "resize2fs /dev/vda1"
+	fi
+fi
+
+echo
+# Get hostname for new VM
+read -p "New Hostname: " NEW_HOST
+
+# Set hostname on VM via SSH
+ssh root@$VM_IP "
+NEW_HOST=$NEW_HOST
+OLD_HOST=\$(cat /etc/hostname)
+
+echo \"Removing Old Hostname Line from /etc/hosts\"
+sed -i '/'\$OLD_HOST'\$/ d' /etc/hosts
+echo \"Ammending New Hostname Line to /etc/hosts\"
+echo -e \"127.0.1.1\\t\$NEW_HOST.$DOMAIN\\t\$NEW_HOST\" >> /etc/hosts
+cat /etc/hosts
+
+echo \"Setting Hostname in /etc/hostname\"
+echo \"\$NEW_HOST\" > /etc/hostname
+cat /etc/hostname
+echo \"Restarting VM\"
+reboot
+"
+# Once VM is finished rebooting let them know it's ready to go.
+echo -e "Waiting for $NEW_VM to reboot."
+sleep 15
+while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+read -p "Add $NEW_VM to /etc/hosts?: " ANS
+if [ $ANS == "y" ];then
+		echo -e "$VM_IP\t$NEW_VM" >> /etc/hosts
+		echo -e "cat /etc/hosts\n"
+		cat /etc/hosts
+fi
+echo "$NEW_VM Ready to Go! at $VM_IP"

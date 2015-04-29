@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#ping all possible IPs on network
+for i in {1..249};do
+	ping -c 1 -n -q -r -t 1 -s 1 -W 1 192.168.1.$i > /dev/null &
+done
+
+echo
+
+#get list of vms
+for name in $(virsh list | grep running | awk '{print $2}');do
+#print all vms and their ip and mac address
+	printf "$name: "
+	arp -an | grep "$(virsh dumpxml $name | grep "mac address"| sed "s/.*'\(.*\)'.*/\1/g")" | awk '{print $2," -- ",$4}' | tr -d '()'
+done
+
+echo
