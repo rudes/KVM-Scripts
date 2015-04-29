@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#set variables
+OLDHOST=$(cat /etc/hostname)
+read -p "New Hostname: " NEWHOST
+echo "Old Hosts: "
+cat /etc/hosts
+echo "Removing old Host line:"
+#remove the old hostname line from hosts
+sed -i '/'$OLDHOST'$/ d' /etc/hosts
+cat /etc/hosts
+echo "Setting Hosts:"
+#append the new host line to hosts
+echo -e "127.0.1.1\t$NEWHOST.cryocorp.local\t$NEWHOST" >> /etc/hosts
+cat /etc/hosts
+echo "Old Hostname:"
+cat /etc/hostname
+echo
+#overwrite hostname
+echo "$NEWHOST" > /etc/hostname
+echo "New Hostname:"
+cat /etc/hostname
+echo
+
