@@ -25,16 +25,10 @@ root@base:~# df -h
 
 Filesystem                                              Size  Used Avail Use% Mounted on
 rootfs                                                  1.8G  926M  816M  54% /
-udev                                                     10M     0   10M   0% /dev
-tmpfs                                                   202M  240K  202M   1% /run
-/dev/disk/by-uuid/96182412-2aa9-43f4-a301-0e524b8a5d20  1.8G  926M  816M  54% /
-tmpfs                                                   5.0M     0  5.0M   0% /run/lock
-tmpfs                                                   430M     0  430M   0% /run/shm
 
 root@base:~# free -h
 
              total       used       free     shared    buffers     cached
 Mem:          2.0G       156M       1.8G         0B       8.8M        68M
--/+ buffers/cache:        79M       1.9G
 Swap:         132M         0B       132M
 
