@@ -1,9 +1,10 @@
 #!/bin/bash
 
-##################################################
-##					VARIABLES					##
-##	  Set All Variables Before Using Script		##
-##################################################
+####################################################
+##					VARIABLES					  ##
+##	  Set All Variables Before Using Script		  ##
+## This script is intended to be run on the guest ##
+####################################################
 # DOMAIN="DOMAIN.LOCAL.OR.NOTLOCAL"
 
 if [ -z $DOMAIN ];then
