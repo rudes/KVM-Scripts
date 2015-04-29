@@ -2,11 +2,12 @@
 
 ##################################################
 ##					VARIABLES					##
+##	  Set All Variables Before Using Script		##
 ##################################################
-BASE_VM="base_debian"
-STORAGE_PATH="/home/jariddle/images"
-DOMAIN="cryocorp.local"
-BASE_LAN_IP="192.168.1"
+# BASE_VM="BASE_VM"
+# STORAGE_PATH="/PATH/TO/KVM/.IMG/FILES/"
+# DOMAIN="DOMAIN.LOCAL.OR.NOTLOCAL"
+# BASE_LAN_IP="192.168.1"
 
 if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] || [ -z $BASE_LAN_IP ];then
 		echo -e "########################################################"
