@@ -1,24 +1,29 @@
 #!/bin/bash
 
-#set variables
-OLDHOST=$(cat /etc/hostname)
-read -p "New Hostname: " NEWHOST
-echo "Old Hosts: "
-cat /etc/hosts
-echo "Removing old Host line:"
-#remove the old hostname line from hosts
-sed -i '/'$OLDHOST'$/ d' /etc/hosts
-cat /etc/hosts
-echo "Setting Hosts:"
-#append the new host line to hosts
-echo -e "127.0.1.1\t$NEWHOST.cryocorp.local\t$NEWHOST" >> /etc/hosts
-cat /etc/hosts
-echo "Old Hostname:"
-cat /etc/hostname
-echo
-#overwrite hostname
-echo "$NEWHOST" > /etc/hostname
-echo "New Hostname:"
-cat /etc/hostname
-echo
+##################################################
+##					VARIABLES					##
+##	  Set All Variables Before Using Script		##
+##################################################
+# DOMAIN="DOMAIN.LOCAL.OR.NOTLOCAL"
 
+if [ -z $DOMAIN ];then
+		echo -e "########################################################"
+		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
+		echo -e "########################################################"
+		exit 1
+fi
+
+# Get hostname for new VM
+read -p "New Hostname: " NEW_HOST
+
+# Set hostname on Guest
+OLD_HOST=$(cat /etc/hostname)
+echo "Removing Old Hostname Line from /etc/hosts"
+sed -i '/'$OLD_HOST'$/ d' /etc/hosts
+echo "Ammending New Hostname Line to /etc/hosts"
+echo -e "127.0.1.1\t$NEW_HOST.$DOMAIN\t$NEW_HOST" >> /etc/hosts
+cat /etc/hosts
+echo "Setting Hostname in /etc/hostname"
+echo "$NEW_HOST" > /etc/hostname
+cat /etc/hostname
+echo "Reboot Machine to finish."
