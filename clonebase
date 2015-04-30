@@ -64,6 +64,7 @@ if [[ -n "$NEW_SIZE" ]];then
 		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
 		sleep 8
 # SSH Into VM to repartition vda device, reboot the VM on exit
+# TODO: Automate fstab process using sftab
 		ssh root@$VM_IP
 		virsh reboot $NEW_VM
 
@@ -74,14 +75,18 @@ if [[ -n "$NEW_SIZE" ]];then
 		echo -e "Expanding new storage"
 		ssh root@$VM_IP "
 		resize2fs /dev/vda1
+		## Create swap UUID after partitioning
 		mkswap /dev/vda5
 		echo -e \"Setting new Swap ID in fstab\"
 		OLD_UUID=\$(cat /etc/fstab | grep swap | grep UUID | awk '{print \$1}' | sed 's/UUID=//')
 		echo -e \"Old Swap UUID: \$OLD_UUID\"
 		NEW_UUID=\$(ls -l /dev/disk/by-uuid/ | grep vda5 | awk '{print \$9}')
 		echo -e \"New Swap UUID: \$NEW_UUID\"
+		## Replace the old UUID with the new one
 		sed -i 's/'\$OLD_UUID'/'\$NEW_UUID'/' /etc/fstab
+		## Display changes
 		cat /etc/fstab
+		## Active swap
 		swapon /dev/vda5
 		"
 	fi
