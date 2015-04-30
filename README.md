@@ -1,7 +1,5 @@
 KVM Scripts for Cloning Virtual Machines and Managing them.
 
-Read the Usage file for an example of the scripts being used live
-
 Setup:
 
 Host: 
