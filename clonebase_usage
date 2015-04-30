@@ -215,16 +215,3 @@ root@CRYWEB02:~# logout
 Connection to cryweb02 closed.
 
 ##########################################################################################
-
-[root@host ~]# ./getvmip
-
-vm1: 192.168.1.63  --  52:54:00:3e:d7:81
-vm2: 192.168.1.220  --  52:54:00:44:81:89
-vm3: 192.168.1.122  --  52:54:00:3e:12:94
-vm4: 192.168.1.109  --  52:54:00:0b:d1:51
-
-######### getvmip is very simple, it generates a list of vm's from virsh, #########
-######### takes their mac addresses and compares them against arp to get you the IP, #########
-######### great for setting up new VM's when you don't have access to virt-viewer #########
-
-##########################################################################################
