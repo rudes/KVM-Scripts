@@ -18,3 +18,19 @@ Base Guest:
 		Mem:          2.0G       156M       1.8G         0B       8.8M        68M
 		Swap:         132M         0B       132M
 
+Scripts:
+
+clonebase is used to clone a baseline VM, in my case i use it to clone a simple debian 2GB machine. clonebase will clone the vm, resize the storage drive, activate the swap drive, and rename the new guest's hostname.
+
+changehost is kept on the baseline guest VM and is used to change the hostname of the guest.
+
+getvmip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
+example:
+
+		vm1: 192.168.1.220  --  52:54:00:44:81:89
+		vm2: 192.168.1.122  --  52:54:00:3e:12:94
+		vm3: 192.168.1.109  --  52:54:00:0b:d1:51
+		vm4: 192.168.1.191  --  52:54:00:db:63:d0
+		vm5: 192.168.1.2  --  52:54:00:e8:ca:04
+		vm6: 192.168.1.91  --  52:54:00:61:18:0b
+
