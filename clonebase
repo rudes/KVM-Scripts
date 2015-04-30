@@ -72,7 +72,18 @@ if [[ -n "$NEW_SIZE" ]];then
 		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
 # Expand storage on new VM using resize2fs
 		echo -e "Expanding new storage"
-		ssh root@$VM_IP "resize2fs /dev/vda1"
+		ssh root@$VM_IP "
+		resize2fs /dev/vda1
+		mkswap /dev/vda5
+		echo -e \"Setting new Swap ID in fstab\"
+		OLD_UUID=\$(cat /etc/fstab | grep swap | grep UUID | awk '{print \$1}' | sed 's/UUID=//')
+		echo -e \"Old Swap UUID: \$OLD_UUID\"
+		NEW_UUID=\$(ls -l /dev/disk/by-uuid/ | grep vda5 | awk '{print \$9}')
+		echo -e \"New Swap UUID: \$NEW_UUID\"
+		sed -i 's/'\$OLD_UUID'/'\$NEW_UUID'/' /etc/fstab
+		cat /etc/fstab
+		swapon /dev/vda5
+		"
 	fi
 fi
 
