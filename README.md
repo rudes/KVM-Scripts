@@ -25,7 +25,7 @@ clonebase is used to clone a baseline VM, in my case i use it to clone a simple 
 changehost is kept on the baseline guest VM and is used to change the hostname of the guest.
 
 getvmip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
-example:
+		example:
 
 		vm1: 192.168.1.220  --  52:54:00:44:81:89
 		vm2: 192.168.1.122  --  52:54:00:3e:12:94
