@@ -20,11 +20,11 @@ Base Guest:
 
 Scripts:
 
-clonebase is used to clone a baseline VM, in my case i use it to clone a simple debian 2GB machine. clonebase will clone the vm, resize the storage drive, activate the swap drive, and rename the new guest's hostname.
+exclonebase is used to clone a baseline VM, in my case i use it to clone a simple debian 2GB machine. exclonebase will clone the vm, resize the storage drive, activate the swap drive, and rename the new guest's hostname.
 
-changehost is kept on the baseline guest VM and is used to change the hostname of the guest.
+exchangehost is kept on the baseline guest VM and is used to change the hostname of the guest.
 
-getvmip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
+ckguestip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
 
 		example:
 		vm1: 192.168.1.220  --  52:54:00:44:81:89
@@ -34,3 +34,11 @@ getvmip will get the mac of each VM and compare it against the IP's on the netwo
 		vm5: 192.168.1.2  --  52:54:00:e8:ca:04
 		vm6: 192.168.1.91  --  52:54:00:61:18:0b
 
+Installation:
+
+		install libvirt and git
+		setup a baseline VM
+		shutdown the baseline VM
+		run git clone https://github.com/rudes/KVM-Scripts.git
+		cd KVM-Scripts
+		./exclonebase <New VM Name>
