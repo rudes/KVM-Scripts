@@ -6,8 +6,9 @@
 ##################################################
 # BASE_VM="BASE_VM"
 # STORAGE_PATH="/PATH/TO/KVM/.IMG/FILES/"
-# DOMAIN="DOMAIN.LOCAL.OR.NOTLOCAL"
 # BASE_LAN_IP="192.168.1"
+# GUEST_SWAP="/dev/vda#"
+# GUEST_ROOT="/dev/vda#"
 
 if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] || [ -z $BASE_LAN_IP ];then
 		echo -e "########################################################"
@@ -73,9 +74,9 @@ if [[ -n "$NEW_SIZE" ]];then
 # Expand storage on new VM using resize2fs
 		echo -e "Expanding new storage"
 		ssh root@$VM_IP "
-		resize2fs /dev/vda1
+		resize2fs $GUEST_ROOT
 # Create swap UUID after partitioning
-		mkswap /dev/vda5
+		mkswap $GUEST_SWAP
 		echo -e \"Setting new Swap ID in fstab\"
 		OLD_UUID=\$(cat /etc/fstab | grep swap | grep UUID | awk '{print \$1}' | sed 's/UUID=//')
 		echo -e \"Old Swap UUID: \$OLD_UUID\"
@@ -100,16 +101,15 @@ ssh root@$VM_IP "
 NEW_HOST=$NEW_HOST
 OLD_HOST=\$(cat /etc/hostname)
 
-echo \"Removing Old Hostname Line from /etc/hosts\"
-sed -i '/'\$OLD_HOST'\$/ d' /etc/hosts
-echo \"Ammending New Hostname Line to /etc/hosts\"
-echo -e \"127.0.1.1\\t\$NEW_HOST.$DOMAIN\\t\$NEW_HOST\" >> /etc/hosts
-cat /etc/hosts
+echo -e \"Ammending New Hostname Line to /etc/hosts\\n\"
 
-echo \"Setting Hostname in /etc/hostname\"
+sed -i 's/'\$OLD_HOST'/'\$NEW_HOST'/g' /etc/hosts
+echo 'cat /etc/hosts';cat /etc/hosts
+echo -e \"\\nSetting Hostname in /etc/hostname\\n\"
+
 echo \"\$NEW_HOST\" > /etc/hostname
-cat /etc/hostname
-echo \"Restarting VM\"
+echo 'cat /etc/hostname';cat /etc/hostname
+echo -e \"\\nRestarting VM\"
 reboot
 "
 # Once VM is finished rebooting let them know it's ready to go.
