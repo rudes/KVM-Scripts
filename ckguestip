@@ -18,9 +18,9 @@ for i in {1..249};do
 done
 
 echo
-ARG01=$(if [[ -z $1 ]];then echo "running";else echo "$1";fi) 
+GREP_OPTION=$(if [[ -z $1 ]];then echo "running";else echo "$1";fi) 
 #get list of vms
-for name in $(virsh list | grep -i "$ARG01" | awk '{print $2}');do
+for name in $(virsh list | grep -i "$GREP_OPTION" | awk '{print $2}');do
 #print all vms and their ip and mac address
 	printf "$name: "
 	arp -an | grep "$(virsh dumpxml $name | grep "mac address"| sed "s/.*'\(.*\)'.*/\1/g")" | awk '{print $2," -- ",$4}' | tr -d '()'
