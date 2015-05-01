@@ -1,18 +1,24 @@
 #!/bin/bash
 
-# Get hostname for new VM
+# Get new hostname
 if [[ -z $1 ]];then
-read -p "New Hostname: " NEW_HOST
+		read -p "New Hostname: " NEW_HOST
 else
-NEW_HOST="$1"
+		NEW_HOST="$1"
 fi
 
-# Set hostname on Guest
+# Get old hostname from system
 OLD_HOST=$(cat /etc/hostname)
-echo -e "Ammending New Hostname Line to /etc/hosts\n"
+
+echo -e "Ammending New Hostname to /etc/hosts\n"
+
+# Replace old hostname with new one
 sed -i 's/'$OLD_HOST'/'$NEW_HOST'/g' /etc/hosts
 echo "cat /etc/hosts";cat /etc/hosts
 echo -e "\nSetting Hostname in /etc/hostname\n"
+
+# Rewrite file with new hostname
 echo "$NEW_HOST" > /etc/hostname
 echo "cat /etc/hostname";cat /etc/hostname
 echo "Reboot Machine to finish."
+
