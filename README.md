@@ -27,12 +27,12 @@ exchangehost is kept on the baseline guest VM and is used to change the hostname
 ckguestip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
 
 		example:
-		vm1: 192.168.1.220  --  52:54:00:44:81:89
-		vm2: 192.168.1.122  --  52:54:00:3e:12:94
-		vm3: 192.168.1.109  --  52:54:00:0b:d1:51
-		vm4: 192.168.1.191  --  52:54:00:db:63:d0
-		vm5: 192.168.1.2  --  52:54:00:e8:ca:04
-		vm6: 192.168.1.91  --  52:54:00:61:18:0b
+		VM1:      192.168.1.2    --  52:54:00:e8:ca:04
+		VM2:      192.168.1.91   --  52:54:00:61:18:0b
+		VM3:      192.168.1.191  --  52:54:00:db:63:d0
+		VM4:      192.168.1.220  --  52:54:00:44:81:89
+		VM5:      192.168.1.122  --  52:54:00:3e:12:94
+		VM6:      192.168.1.109  --  52:54:00:0b:d1:51
 
 Installation:
 
