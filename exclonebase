@@ -16,7 +16,11 @@ if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] || [ -z $BASE_LAN_I
 		exit 1
 fi
 # Get name for new VM, virt-clone the baseline VM under the new name
-read -p "New VM Name: " NEW_VM
+if [[ -z $1 ]];then
+		read -p "New VM Name: " NEW_VM
+else
+		NEW_VM="$1"
+fi
 echo -e "Cloning Baseline VM"
 virt-clone -o $BASE_VM -n $NEW_VM -f "$STORAGE_PATH/$NEW_VM.img"
 echo -e "Clone Complete"
