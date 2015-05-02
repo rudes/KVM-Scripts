@@ -4,7 +4,7 @@
 ##					VARIABLES					##
 ##	  Set All Variables Before Using Script		##
 ##################################################
-# BASE_LAN_IP="192.168.1"
+ BASE_LAN_IP="192.168.1"
 
 if [ -z $BASE_LAN_IP ];then
 		echo -e "########################################################"
@@ -17,12 +17,21 @@ for i in {1..249};do
 	ping -c 1 -n -q -r -t 1 -s 1 -W 1 $BASE_LAN_IP.$i > /dev/null &
 done
 
-echo
+# If a argument is supplied only display data for that argument, else, everything
 GREP_OPTION=$(if [[ -z $1 ]];then echo "running";else echo "$1";fi) 
+
 # Get list of VMs
+printf "\n%-15s %-18s %-15s\n" "Hostname" "IP Address" "Mac Address"
+printf "%-15s %-18s %-15s\n" "--------" "----------" "-----------"
+
 for name in $(virsh list | grep -i "$GREP_OPTION" | sort -k 2 | awk '{print $2}');do
-# Print all VMs their IPs and MACs
-	arp -an | grep "$(virsh dumpxml $name | grep "mac address"| sed "s/.*'\(.*\)'.*/\1/g")" | awk '{printf "%-15s %-15s %-4s %-15s\n", "'$name': ", $2, " -- ", $4}' | tr -d '()'
+
+	# Print all VMs their IPs and MACs
+	arp -an | grep "$(virsh dumpxml $name | \
+	grep "mac address"| \
+	sed "s/.*'\(.*\)'.*/\1/g")" | \
+	awk '{printf "%-15s %-20s %-15s\n", "'$name'", $2, $4}' | tr -d '()'
+
 done
 
 echo
