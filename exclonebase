@@ -42,7 +42,7 @@ echo "$NEW_VM's IP: $VM_IP"
 # Get storage size and ask to add storage
 STORAGE_SIZE=$(ls -hl $STORAGE_PATH | grep $NEW_VM | awk '{printf $5}')
 echo -e "Storage Size: $STORAGE_SIZE"
-read -p "Add Storage? (ex: +10G or 'n' to exit): " NEW_SIZE
+read -p "Add Storage? (ex: +10G or 'n' to skip): " NEW_SIZE
 # If user decides to add storage shutdown VM, rezise .img file and start VM
 if [[ -n "$NEW_SIZE" ]];then
 	if [ "$NEW_SIZE" != "n" ];then
