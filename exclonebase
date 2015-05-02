@@ -34,7 +34,7 @@ echo -e "Getting $NEW_VM's IP"
 sleep 10
 # Use ckguestip to get the ip for the new VM
 while [[ -z $VM_IP ]];do
-		VM_IP=$($SCRIPT_LOC/ckguestip $NEW_VM | awk '{printf $2}')
+		VM_IP=$($SCRIPT_LOC/ckguestip $NEW_VM | grep [1-9] | awk '{printf $2}')
 done
 echo "$NEW_VM's IP: $VM_IP"
 
@@ -80,14 +80,14 @@ if [[ -n "$NEW_SIZE" ]];then
 		echo -e \"Setting new Swap ID in fstab\"
 		OLD_UUID=\$(cat /etc/fstab | grep swap | grep UUID | awk '{print \$1}' | sed 's/UUID=//')
 		echo -e \"Old Swap UUID: \$OLD_UUID\"
-		NEW_UUID=\$(ls -l /dev/disk/by-uuid/ | grep vda5 | awk '{print \$9}')
+		NEW_UUID=\$(ls -l /dev/disk/by-uuid/ | grep \$(basename $GUEST_SWAP) | awk '{print \$9}')
 		echo -e \"New Swap UUID: \$NEW_UUID\"
 # Replace the old UUID with the new one
 		sed -i 's/'\$OLD_UUID'/'\$NEW_UUID'/' /etc/fstab
 # Display changes
 		cat /etc/fstab
 # Active swap
-		swapon /dev/vda5
+		swapon $GUEST_SWAP
 		"
 	fi
 fi
@@ -112,14 +112,16 @@ echo 'cat /etc/hostname';cat /etc/hostname
 echo -e \"\\nRestarting VM\"
 reboot
 "
+
 # Once VM is finished rebooting let them know it's ready to go.
 echo -e "Waiting for $NEW_VM to reboot."
 sleep 15
 while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
 read -p "Add $NEW_VM to /etc/hosts?: " ANS
 if [ $ANS == "y" ];then
-		echo -e "$VM_IP\t$NEW_VM" >> /etc/hosts
+		printf "%-20s %-20s" "$VM_IP" "$NEW_VM" >> /etc/hosts
 		echo -e "cat /etc/hosts\n"
 		cat /etc/hosts
 fi
 echo "$NEW_VM Ready to Go! at $VM_IP"
+
