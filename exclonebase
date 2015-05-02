@@ -10,7 +10,8 @@
 # GUEST_SWAP="/dev/vda#"
 # GUEST_ROOT="/dev/vda#"
 
-if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] || [ -z $BASE_LAN_IP ];then
+if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] \
+		|| [ -z $BASE_LAN_IP ] || [ -z $GUEST_SWAP ] || [ -z $GUEST_ROOT ];then
 		echo -e "########################################################"
 		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
 		echo -e "########################################################"
