@@ -23,6 +23,8 @@ if [[ -z $1 ]];then
 else
 		NEW_VM="$1"
 fi
+# Get scripts execution location for ckguestip
+SCRIPT_LOC=$(dirname $0)
 echo -e "Cloning Baseline VM"
 virt-clone -o $BASE_VM -n $NEW_VM -f "$STORAGE_PATH/$NEW_VM.img"
 echo -e "Clone Complete"
@@ -30,7 +32,6 @@ echo -e "Clone Complete"
 # Start the VM and get the IP using arp
 echo -e "Starting $NEW_VM"
 virsh start $NEW_VM
-
 echo -e "Getting $NEW_VM's IP"
 sleep 10
 # Use ckguestip to get the ip for the new VM
