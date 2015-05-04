@@ -1,6 +1,8 @@
 #/bin/bash
 
+# Get list of virtual machines
 for i in $(virsh list | grep running | awk '{print$2}')
 do 
+				# Copy the keygen to every server
 				ssh-copy-id $i
 done

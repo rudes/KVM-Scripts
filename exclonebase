@@ -95,7 +95,8 @@ fi
 
 echo
 # Get hostname for new VM
-read -p "New Hostname: " NEW_HOST
+read -p "New Hostname [$NEW_VM]: " NEW_HOST
+if [ $NEW_HOST = "" ];then NEW_HOST=$NEW_VM;fi
 
 # Set hostname on VM via SSH
 ssh root@$VM_IP "
@@ -119,9 +120,14 @@ sleep 15
 while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
 read -p "Add $NEW_VM to /etc/hosts?: " ANS
 if [ $ANS == "y" ];then
-		printf "%-20s %-20s" "$VM_IP" "$NEW_VM" >> /etc/hosts
+		printf "%-20s %-20s\n" "$VM_IP" "$NEW_VM" >> /etc/hosts
 		echo -e "cat /etc/hosts\n"
 		cat /etc/hosts
+fi
+unset $ANS
+read -p "Sync SSH Keys?: " ANS
+if [ $ANS == "y" ];then
+			ssh-copy-id $VM_IP	
 fi
 echo "$NEW_VM Ready to Go! at $VM_IP"
 
