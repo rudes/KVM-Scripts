@@ -66,7 +66,6 @@ if [[ -n "$NEW_SIZE" ]];then
 		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
 		sleep 8
 # SSH Into VM to repartition vda device, reboot the VM on exit
-# TODO: Automate fstab process using sftab
 		ssh root@$VM_IP
 		virsh reboot $NEW_VM
 
@@ -100,16 +99,15 @@ read -p "New Hostname: " NEW_HOST
 
 # Set hostname on VM via SSH
 ssh root@$VM_IP "
-NEW_HOST=$NEW_HOST
 OLD_HOST=\$(cat /etc/hostname)
 
 echo -e \"Ammending New Hostname Line to /etc/hosts\\n\"
 
-sed -i 's/'\$OLD_HOST'/'\$NEW_HOST'/g' /etc/hosts
+sed -i 's/'\$OLD_HOST'/'$NEW_HOST'/g' /etc/hosts
 echo 'cat /etc/hosts';cat /etc/hosts
 echo -e \"\\nSetting Hostname in /etc/hostname\\n\"
 
-echo \"\$NEW_HOST\" > /etc/hostname
+echo \"$NEW_HOST\" > /etc/hostname
 echo 'cat /etc/hostname';cat /etc/hostname
 echo -e \"\\nRestarting VM\"
 reboot
