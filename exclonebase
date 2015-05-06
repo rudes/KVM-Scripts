@@ -1,17 +1,19 @@
 #!/bin/bash
 
 ##################################################
-##					VARIABLES					##
-##	  Set All Variables Before Using Script		##
+##                  VARIABLES                   ##
+##    Set All Variables Before Using Script     ##
 ##################################################
 # BASE_VM="BASE_VM"
 # STORAGE_PATH="/PATH/TO/KVM/.IMG/FILES/"
-# BASE_LAN_IP="192.168.1"
 # GUEST_SWAP="/dev/vda#"
 # GUEST_ROOT="/dev/vda#"
 
-if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] || [ -z $DOMAIN ] \
-		|| [ -z $BASE_LAN_IP ] || [ -z $GUEST_SWAP ] || [ -z $GUEST_ROOT ];then
+# Get scripts execution location for ckguestip
+SCRIPT_LOC=$(dirname $0)
+
+if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] \
+		|| [ -z $GUEST_SWAP ] || [ -z $GUEST_ROOT ];then
 		echo -e "########################################################"
 		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
 		echo -e "########################################################"
@@ -23,13 +25,14 @@ if [[ -z $1 ]];then
 else
 		NEW_VM="$1"
 fi
-# Get scripts execution location for ckguestip
-SCRIPT_LOC=$(dirname $0)
+CHECK_IP() {
+				while [ ping -c 1 $VM_IP &>/dev/null ];do sleep 1;done
+}
 echo -e "Cloning Baseline VM"
 virt-clone -o $BASE_VM -n $NEW_VM -f "$STORAGE_PATH/$NEW_VM.img"
 echo -e "Clone Complete"
 
-# Start the VM and get the IP using arp
+# Start the VM and get the IP
 echo -e "Starting $NEW_VM"
 virsh start $NEW_VM
 echo -e "Getting $NEW_VM's IP"
@@ -49,7 +52,7 @@ if [[ -n "$NEW_SIZE" ]];then
 	if [ "$NEW_SIZE" != "n" ];then
 		virsh shutdown $NEW_VM
 		sleep 15
-		while [ ping -c 1 $VM_IP &>/dev/null ];do sleep 1;done
+		CHECK_IP
 
 		qemu-img resize "$STORAGE_PATH/$NEW_VM.img" "$NEW_SIZE"
 		
@@ -58,12 +61,12 @@ if [[ -n "$NEW_SIZE" ]];then
 		echo -e "# Run fdisk /dev/vda                                         #"
 		echo -e "# Delete all partitions and rebuild with the extra storage   #"
 		echo -e "# Write the Changes                                          #"
-		echo -e "# Exit SSH to Reboot $NEW_VM								  #"
+		echo -e "# Exit SSH to Reboot $NEW_VM                                 #"
 		echo -e "##############################################################"
 
 		virsh start $NEW_VM
 		sleep 10
-		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+		CHECK_IP
 		sleep 8
 # SSH Into VM to repartition vda device, reboot the VM on exit
 		ssh root@$VM_IP
@@ -71,7 +74,7 @@ if [[ -n "$NEW_SIZE" ]];then
 
 		echo -e "Waiting for $NEW_VM to reboot."
 		sleep 15
-		while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+		CHECK_IP
 # Expand storage on new VM using resize2fs
 		echo -e "Expanding new storage"
 		ssh root@$VM_IP "
@@ -96,7 +99,7 @@ fi
 echo
 # Get hostname for new VM
 read -p "New Hostname [$NEW_VM]: " NEW_HOST
-if [ $NEW_HOST = "" ];then NEW_HOST=$NEW_VM;fi
+if [ -z $NEW_HOST ];then NEW_HOST=$NEW_VM;fi
 
 # Set hostname on VM via SSH
 ssh root@$VM_IP "
@@ -114,20 +117,22 @@ echo -e \"\\nRestarting VM\"
 reboot
 "
 
-# Once VM is finished rebooting let them know it's ready to go.
-echo -e "Waiting for $NEW_VM to reboot."
-sleep 15
-while ! ping -c 1 $VM_IP &>/dev/null;do sleep 1;done
+# Ask to add vm name to hosts file for sshing via hostname
 read -p "Add $NEW_VM to /etc/hosts?: " ANS
-if [ $ANS == "y" ];then
+if [ "$ANS" = "y" ];then
 		printf "%-20s %-20s\n" "$VM_IP" "$NEW_VM" >> /etc/hosts
 		echo -e "cat /etc/hosts\n"
 		cat /etc/hosts
 fi
-unset $ANS
+echo -e "Waiting for $NEW_VM to reboot."
+sleep 15
+CHECK_IP
+# Ask to sync ssh key to new guest for passwordless entry
+unset ANS
 read -p "Sync SSH Keys?: " ANS
 if [ $ANS == "y" ];then
 			ssh-copy-id $VM_IP	
 fi
+# Once VM is finished rebooting let them know it's ready to go.
 echo "$NEW_VM Ready to Go! at $VM_IP"
 
