@@ -42,3 +42,7 @@ Installation:
 		run git clone https://github.com/rudes/KVM-Scripts.git
 		cd KVM-Scripts
 		./exclonebase <New VM Name>
+
+Host Distributions Tested On:
+				Centos 6.6
+				Debian 8.0
