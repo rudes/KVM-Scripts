@@ -61,7 +61,7 @@ if [[ -n "$NEW_SIZE" ]];then
 		echo -e "# Run fdisk /dev/vda                                         #"
 		echo -e "# Delete all partitions and rebuild with the extra storage   #"
 		echo -e "# Write the Changes                                          #"
-		echo -e "# Exit SSH to Reboot $NEW_VM                                 #"
+		printf "%-1s %-58s %-1s\n" "#" "Exit SSH to Reboot $NEW_VM" "#"
 		echo -e "##############################################################"
 
 		virsh start $NEW_VM
