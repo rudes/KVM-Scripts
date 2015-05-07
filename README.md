@@ -45,5 +45,5 @@ Installation:
 
 Host Distributions Tested On:
 
-				Centos 6.6
-				Debian 8.0
+		Centos 6.6
+		Debian 8.0
