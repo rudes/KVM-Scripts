@@ -34,6 +34,8 @@ ckguestip will get the mac of each VM and compare it against the IP's on the net
 		GUEST5:      192.168.1.122  --  52:54:00:3e:12:94
 		GUEST6:      192.168.1.109  --  52:54:00:0b:d1:51
 
+exsyncpass is for syncing your ssh-keygens with your guest servers, if you set it with your base they will work on every VM, but if you ever need to refresh them this will make it easy.
+
 Installation:
 
 		install libvirt and git
