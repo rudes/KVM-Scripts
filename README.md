@@ -38,7 +38,7 @@ exsyncpass is for syncing your ssh-keygens with your guest servers, if you set i
 
 ### Installation
 
-		install libvirt and git
+		install [libvirt](http://libvirt.org/) and [git](https://git-scm.com/)
 		setup a baseline VM
 		shutdown the baseline VM
 		run git clone https://github.com/rudes/KVM-Scripts.git
