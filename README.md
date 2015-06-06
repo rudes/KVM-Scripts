@@ -43,16 +43,20 @@ exsyncpass is for syncing your ssh-keygens with your guest servers, if you set i
 * Setup a [Baseline VM](http://www.howtogeek.com/117635/how-to-install-kvm-and-create-virtual-machines-on-ubuntu/) (Ubuntu Tutorial, but it's all the same.)
 
 Shutdown the Baseline VM
+
 				virsh shutdown VMNAME
 
 Cone the Repository
+
 				git clone https://github.com/rudes/KVM-Scripts.git
 				cd KVM-Scripts
 
 Open the script and set your variables at the top
+
 				vim exclonebase
 
 Run and create your first clone!
+
 				./exclonebase <VMNAME>
 
 ### Host Distributions Tested On
