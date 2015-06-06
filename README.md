@@ -1,13 +1,13 @@
 KVM Scripts for Cloning Virtual Machines and Managing them.
 
-Setup:
+### Setup
 
-Host: 
+### Host 
 
 		CentOS release 6.6 - Linux 2.6.32-504.16.2.el6.x86_64 GNU/Linux
 		libvirt version: 0.10.2, package: 46.el6_6.6 (CentOS BuildSystem)
 
-Base Guest:
+### Base Guest
 
 		Debian GNU/Linux 7 (wheezy) - Linux base 3.2.0-4-amd64 x86_64 GNU/Linux
 
@@ -18,7 +18,7 @@ Base Guest:
 		Mem:          2.0G       156M       1.8G         0B       8.8M        68M
 		Swap:         132M         0B       132M
 
-Scripts:
+### Scripts
 
 exclonebase is used to clone a baseline VM, in my case i use it to clone a simple debian 2GB machine. exclonebase will clone the vm, resize the storage drive, activate the swap drive, and rename the new guest's hostname.
 
@@ -36,7 +36,7 @@ ckguestip will get the mac of each VM and compare it against the IP's on the net
 
 exsyncpass is for syncing your ssh-keygens with your guest servers, if you set it with your base they will work on every VM, but if you ever need to refresh them this will make it easy.
 
-Installation:
+### Installation
 
 		install libvirt and git
 		setup a baseline VM
@@ -45,7 +45,7 @@ Installation:
 		cd KVM-Scripts
 		./exclonebase <New VM Name>
 
-Host Distributions Tested On:
+### Host Distributions Tested On
 
 		Centos 6.6
 		Debian 8.0
