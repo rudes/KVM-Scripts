@@ -2,7 +2,7 @@ KVM Scripts for Cloning Virtual Machines and Managing them.
 
 ### Setup
 
-### Host 
+### Host
 
 		CentOS release 6.6 - Linux 2.6.32-504.16.2.el6.x86_64 GNU/Linux
 		libvirt version: 0.10.2, package: 46.el6_6.6 (CentOS BuildSystem)
