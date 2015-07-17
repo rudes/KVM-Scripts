@@ -13,20 +13,20 @@
 SCRIPT_LOC=$(dirname $0)
 
 if [ -z $BASE_VM ] || [ -z $STORAGE_PATH ] \
-		|| [ -z $GUEST_SWAP ] || [ -z $GUEST_ROOT ];then
-		echo -e "########################################################"
-		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
-		echo -e "########################################################"
-		exit 1
+	|| [ -z $GUEST_SWAP ] || [ -z $GUEST_ROOT ];then
+	echo -e "########################################################"
+	echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
+	echo -e "########################################################"
+	exit 1
 fi
 # Get name for new VM, virt-clone the baseline VM under the new name
 if [[ -z $1 ]];then
-		read -p "New VM Name: " NEW_VM
+	read -p "New VM Name: " NEW_VM
 else
-		NEW_VM="$1"
+	NEW_VM="$1"
 fi
 CHECK_IP() {
-				while [ ping -c 1 $VM_IP &>/dev/null ];do sleep 1;done
+	while [ ping -c 1 $VM_IP &>/dev/null ];do sleep 1;done
 }
 echo -e "Cloning Baseline VM"
 virt-clone -o $BASE_VM -n $NEW_VM -f "$STORAGE_PATH/$NEW_VM.img"
@@ -39,7 +39,7 @@ echo -e "Getting $NEW_VM's IP"
 sleep 10
 # Use ckguestip to get the ip for the new VM
 while [[ -z $VM_IP ]];do
-		VM_IP=$($SCRIPT_LOC/ckguestip $NEW_VM | grep [1-9] | awk '{printf $2}')
+	VM_IP=$($SCRIPT_LOC/ckguestip $NEW_VM | grep [1-9] | awk '{printf $2}')
 done
 echo "$NEW_VM's IP: $VM_IP"
 
@@ -55,42 +55,42 @@ if [[ -n "$NEW_SIZE" ]];then
 		CHECK_IP
 
 		qemu-img resize "$STORAGE_PATH/$NEW_VM.img" "$NEW_SIZE"
-		
+
 		echo -e "##############################################################"
 		echo -e "# Entering SSH as root to Resize Storage and Change Hostname #"
 		echo -e "# Run fdisk /dev/vda                                         #"
 		echo -e "# Delete all partitions and rebuild with the extra storage   #"
 		echo -e "# Write the Changes                                          #"
-		printf "%-1s %-58s %-1s\n" "#" "Exit SSH to Reboot $NEW_VM" "#"
+		printf	"%-1s %-58s %-1s\n" "#" "Exit SSH to Reboot $NEW_VM" "#"
 		echo -e "##############################################################"
 
 		virsh start $NEW_VM
 		sleep 10
 		CHECK_IP
 		sleep 8
-# SSH Into VM to repartition vda device, reboot the VM on exit
+		# SSH Into VM to repartition vda device, reboot the VM on exit
 		ssh root@$VM_IP
 		virsh reboot $NEW_VM
 
 		echo -e "Waiting for $NEW_VM to reboot."
 		sleep 15
 		CHECK_IP
-# Expand storage on new VM using resize2fs
+		# Expand storage on new VM using resize2fs
 		echo -e "Expanding new storage"
 		ssh root@$VM_IP "
 		resize2fs $GUEST_ROOT
-# Create swap UUID after partitioning
+		# Create swap UUID after partitioning
 		mkswap $GUEST_SWAP
 		echo -e \"Setting new Swap ID in fstab\"
 		OLD_UUID=\$(cat /etc/fstab | grep swap | grep UUID | awk '{print \$1}' | sed 's/UUID=//')
 		echo -e \"Old Swap UUID: \$OLD_UUID\"
 		NEW_UUID=\$(ls -l /dev/disk/by-uuid/ | grep \$(basename $GUEST_SWAP) | awk '{print \$9}')
 		echo -e \"New Swap UUID: \$NEW_UUID\"
-# Replace the old UUID with the new one
+		# Replace the old UUID with the new one
 		sed -i 's/'\$OLD_UUID'/'\$NEW_UUID'/' /etc/fstab
-# Display changes
+		# Display changes
 		cat /etc/fstab
-# Active swap
+		# Active swap
 		swapon $GUEST_SWAP
 		"
 	fi
@@ -120,9 +120,9 @@ reboot
 # Ask to add vm name to hosts file for sshing via hostname
 read -p "Add $NEW_VM to /etc/hosts?: " ANS
 if [ "$ANS" = "y" ];then
-		printf "%-20s %-20s\n" "$VM_IP" "$NEW_VM" >> /etc/hosts
-		echo -e "cat /etc/hosts\n"
-		cat /etc/hosts
+	printf "%-20s %-20s\n" "$VM_IP" "$NEW_VM" >> /etc/hosts
+	echo -e "cat /etc/hosts\n"
+	cat /etc/hosts
 fi
 echo -e "Waiting for $NEW_VM to reboot."
 sleep 15
@@ -131,7 +131,7 @@ CHECK_IP
 unset ANS
 read -p "Sync SSH Keys?: " ANS
 if [ $ANS == "y" ];then
-			ssh-copy-id $VM_IP	
+	ssh-copy-id $VM_IP
 fi
 # Once VM is finished rebooting let them know it's ready to go.
 echo "$NEW_VM Ready to Go! at $VM_IP"

@@ -2,9 +2,9 @@
 
 # Get new hostname
 if [[ -z $1 ]];then
-		read -p "New Hostname: " NEW_HOST
+	read -p "New Hostname: " NEW_HOST
 else
-		NEW_HOST="$1"
+	NEW_HOST="$1"
 fi
 
 # Get old hostname from system

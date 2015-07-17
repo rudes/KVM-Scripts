@@ -7,10 +7,10 @@
 # BASE_LAN_IP="192.168.1"
 
 if [ -z $BASE_LAN_IP ];then
-		echo -e "########################################################"
-		echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
-		echo -e "########################################################"
-		exit 1
+	echo -e "########################################################"
+	echo -e "# !! PLEASE SET VARIABLES IN SCRIPT BEFORE RUNNING. !! #"
+	echo -e "########################################################"
+	exit 1
 fi
 # Ping all possible IPs on Network
 for i in {1..249};do
@@ -18,7 +18,7 @@ for i in {1..249};do
 done
 
 # If a argument is supplied only display data for that argument, else, everything
-GREP_OPTION=$(if [[ -z $1 ]];then echo "running";else echo "$1";fi) 
+GREP_OPTION=$(if [[ -z $1 ]];then echo "running";else echo "$1";fi)
 
 # Get list of VMs
 printf "\n%-15s %-18s %-15s\n" "Hostname" "IP Address" "Mac Address"
