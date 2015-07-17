@@ -15,7 +15,7 @@
 	Filesystem                  Size  Used Avail Use% Mounted on
 	rootfs                      1.8G  926M  816M  54% /
 
-						total       used       free     shared    buffers     cached
+								total       used       free     shared    buffers     cached
 	Mem:          2.0G       156M       1.8G         0B       8.8M        68M
 	Swap:         132M         0B       132M
 ```
@@ -28,7 +28,7 @@ exchangehost is kept on the baseline guest VM and is used to change the hostname
 
 ckguestip will get the mac of each VM and compare it against the IP's on the network to give you a list of IP Addresses for your virtual machines.
 
-### example:
+### ckguestip Example
 	GUEST1:      192.168.1.2    --  52:54:00:e8:ca:04
 	GUEST2:      192.168.1.91   --  52:54:00:61:18:0b
 	GUEST3:      192.168.1.191  --  52:54:00:db:63:d0
